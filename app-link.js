@@ -161,8 +161,14 @@
 
     if (!target.url) return target;
 
-    if (target.strategy === "scheme-then-store") tryAppThenStore(target.url, target.store);
-    else window.location.href = target.url;
+    // "intent" gets the same safety net as a custom scheme. Chrome on Android
+    // follows browser_fallback_url by itself, but browsers that don't implement
+    // intent:// ignore the navigation entirely and strand the visitor here.
+    if (target.strategy === "scheme-then-store" || target.strategy === "intent") {
+      tryAppThenStore(target.url, target.store);
+    } else {
+      window.location.href = target.url;
+    }
 
     return target;
   }
