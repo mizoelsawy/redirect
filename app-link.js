@@ -105,9 +105,12 @@
       if (document.hidden || document.visibilityState === "hidden") cancelled = true;
     }
 
+    // Only a backgrounded or unloading page proves the app took over.
+    // Deliberately NOT listening for "blur": iOS fires it for the
+    // "Open in the app?" dialog itself, so a visitor who taps Cancel would
+    // be stranded here with the store fallback suppressed.
     document.addEventListener("visibilitychange", cancel);
     window.addEventListener("pagehide", function () { cancelled = true; });
-    window.addEventListener("blur", function () { cancelled = true; });
 
     var timer = setTimeout(function () {
       document.removeEventListener("visibilitychange", cancel);
